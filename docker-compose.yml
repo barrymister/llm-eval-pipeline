@@ -6,36 +6,14 @@ services:
     container_name: llm-eval-mlflow
     ports:
       - "5000:5000"
-    environment:
-      - MLFLOW_BACKEND_STORE_URI=postgresql://mlflow:mlflow@postgres:5432/mlflow
-      - MLFLOW_ARTIFACT_ROOT=/mlflow/artifacts
     volumes:
-      - mlflow_artifacts:/mlflow/artifacts
+      - mlflow_data:/mlflow
     command: >
       mlflow server
-      --backend-store-uri postgresql://mlflow:mlflow@postgres:5432/mlflow
+      --backend-store-uri sqlite:////mlflow/mlflow.db
       --artifacts-destination /mlflow/artifacts
       --host 0.0.0.0
       --port 5000
-    depends_on:
-      postgres:
-        condition: service_healthy
-    restart: unless-stopped
-
-  postgres:
-    image: postgres:16-alpine
-    container_name: llm-eval-postgres
-    environment:
-      POSTGRES_USER: mlflow
-      POSTGRES_PASSWORD: mlflow
-      POSTGRES_DB: mlflow
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U mlflow"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
     restart: unless-stopped
 
   api:
@@ -57,5 +35,4 @@ services:
       - "host.docker.internal:host-gateway"
 
 volumes:
-  postgres_data:
-  mlflow_artifacts:
+  mlflow_data:
