@@ -44,7 +44,7 @@ services:
       dockerfile: Dockerfile
     container_name: llm-eval-api
     ports:
-      - "8000:8000"
+      - "8001:8000"
     environment:
       - MLFLOW_TRACKING_URI=http://mlflow:5000
       - OLLAMA_BASE_URL=${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
