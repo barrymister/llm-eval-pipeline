@@ -1,0 +1,29 @@
+# Example experiment definition
+# Run with: python scripts/run_experiment.py experiments/example.yaml
+#
+# This compares gemma3:12b and mistral-small3.2 on a writing task.
+# Results are logged to MLflow — open http://localhost:5000 to compare runs.
+
+experiment_name: "writing-quality-comparison"
+
+prompt_template: |
+  Write a 3-sentence summary of {{topic}} for a {{audience}} audience.
+  Be concise, accurate, and use plain language.
+
+inputs:
+  - topic: "machine learning"
+    audience: "business executive"
+  - topic: "containerized deployments"
+    audience: "non-technical product manager"
+  - topic: "retrieval augmented generation"
+    audience: "software architect"
+
+models:
+  - gemma3:12b
+  - mistral-small3.2
+  # Uncomment to compare against Claude (requires ANTHROPIC_API_KEY):
+  # - claude-haiku-4-5-20251001
+
+tags:
+  task_type: "summarization"
+  evaluator: "barry"
