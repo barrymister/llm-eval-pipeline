@@ -184,6 +184,25 @@ This project is a hands-on implementation of the MLOps patterns that AWS, Google
 
 ---
 
+## Example results
+
+Live run: `writing-quality-comparison` experiment — 2 models × 2 prompts = 4 tracked runs.
+
+| Model | Input | Quality Score | Latency (ms) | Tokens (est.) |
+|-------|-------|:------------:|:------------:|:-------------:|
+| gemma3:12b | machine learning → business exec | 1.00 | 9,876 | 99 |
+| mistral-small3.2 | machine learning → business exec | 1.00 | 17,674 | 100 |
+| gemma3:12b | containerized deployments → PM | 1.00 | 7,767 | 87 |
+| mistral-small3.2 | containerized deployments → PM | 1.00 | 11,809 | 88 |
+
+**Winner:** `gemma3:12b` — faster on every run (avg 8.8s vs 14.7s) at equivalent quality.
+
+Full run history, parameter diffs, and output artifacts: [mlflow.barrymister.dev](https://mlflow.barrymister.dev)
+
+<!-- Add MLflow dashboard screenshot: docs/screenshots/mlflow-dashboard.png -->
+
+---
+
 ## Infrastructure
 
 Deployed on a self-hosted home server (appfactory):
