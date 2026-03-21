@@ -104,3 +104,28 @@ Find where to make the change in `api/routes/runs.py`. You don't need to run it 
 1. In a production SageMaker environment, what service would you use to detect if model quality is degrading over time — not just in a one-off test? What baseline does it compare against?
 2. This project uses heuristic quality scores. In a real production system, what are two alternative approaches to automated output quality measurement? What are the trade-offs of each?
 3. If you wanted to set an alert when `quality_score` drops below 0.7 on any run, how would you implement that? Where in the codebase would the check go?
+
+---
+
+## Exercise 6 — Model Compatibility Guards
+
+**Cert domain:** AWS Monitoring & Maintenance (24%) | Google Model Governance
+
+**Context:**
+
+In production, not every model can handle every task. A reasoning model (e.g., phi4-reasoning) that generates chain-of-thought `<think>` tags may break a social media post generator that expects clean short-form text. A 3B-parameter model may lack the capacity for complex document summarization.
+
+**Task:**
+
+Design a model compatibility system for this pipeline. The system should:
+1. Store capability metadata per model (provider, parameter count, capabilities, exclusion rules)
+2. Reject incompatible model/task combinations *before* inference — not after
+3. Return a clear error message explaining why the model was excluded
+
+**Questions to answer:**
+1. Where would you store model metadata — in the experiment YAML, in a separate catalog file, or in the database? What are the trade-offs of each?
+2. In SageMaker, what is the equivalent of model compatibility metadata? How does SageMaker Model Registry handle the concept of "this model version is approved for production but not for this specific use case"?
+3. The pipeline currently routes models to providers via `_resolve_provider()` in `api/routes/runs.py`. Sketch how you would add a compatibility check *before* provider routing. What HTTP status code would you return for an incompatible model?
+4. In a multi-model comparison run (4 models × 3 inputs = 12 runs), should one incompatible model fail the entire request or just skip that model and return results for the rest? What does SageMaker Pipelines do when one step in a pipeline fails — does it abort or continue?
+
+**Extension:** Read `docs/adr/002-model-catalog-over-hardcoded-lists.md` for the production decision. How would you implement the `excludeFromModes` pattern as a reusable middleware that works across different API routes?
