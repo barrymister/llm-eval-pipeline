@@ -205,28 +205,30 @@ Full run history, parameter diffs, and output artifacts: [mlflow.barrymister.dev
 
 ## Production evolution
 
-The patterns in this pipeline drove architecture decisions in a production system (growth-engine) managing AI content generation across 5 SaaS products. Here's how each pattern scaled:
+The patterns in this pipeline drove architecture decisions in production systems managing AI content generation across multiple SaaS products. Here's how each pattern scaled:
 
 | Pipeline pattern | Production implementation |
 |---|---|
-| Provider abstraction (`BaseProvider`) | Multi-provider orchestration across Ollama + Claude API + OpenRouter, with model-level capability metadata (40+ models cataloged) |
+| Provider abstraction (`BaseProvider`) | Multi-provider orchestration across Ollama + Claude API + OpenRouter, with model-level capability metadata (76+ models cataloged) |
 | `mlflow.log_metric()` / `mlflow.log_param()` | Direct MLflow API integration for single-run logging — avoids duplicate compute when generating + tracking in one pass |
 | Model name → provider routing | Model catalog with structured metadata: provider, parameter count, context window, capabilities, and exclusion rules per mode |
 | Quality heuristics (`metrics.py`) | Model compatibility guards — models excluded from modes they can't handle (e.g., reasoning models blocked from short-form social content) |
 | Experiment YAML (static) | Dynamic experiment naming from UI — user selects models, keywords, and strategy; system names and tracks the experiment automatically |
-| Synchronous inference | SSE (Server-Sent Events) streaming with heartbeats for long-running inference, preventing Cloudflare 100s timeouts |
+| Synchronous inference | SSE (Server-Sent Events) streaming with heartbeats for long-running inference, preventing proxy timeouts |
+| Single-pipeline eval | Fully automated programmatic SEO pipeline — AI generates content, creates Git PRs, merges, and deploys with daily cron (33 pages live) |
+| Monitoring patterns | AI visibility monitoring scanning 4 AI search engines for brand mentions with automated alerting |
 
-The model catalog was extracted into a standalone open-source npm package: [ai-model-selector](https://www.npmjs.com/package/ai-model-selector) — React components for AI model selection with filtering, comparison, and capability metadata.
+The model catalog was extracted into a standalone open-source npm package: [ai-model-selector](https://www.npmjs.com/package/ai-model-selector) — React components for AI model selection with filtering, comparison, and capability metadata. An MCP server wrapper ([ai-model-selector-mcp](https://www.npmjs.com/package/ai-model-selector-mcp)) gives AI assistants structured tool access to the catalog.
 
 ---
 
 ## Infrastructure
 
-Deployed on a self-hosted home server (appfactory):
+Deployed on a self-hosted home server:
 - MLflow UI: https://mlflow.barrymister.dev
 - API: https://llm-eval.barrymister.dev/docs
-- Local GPU inference via Ollama (gemma3:12b, mistral-small3.2)
-- Docker Compose managed by Coolify PaaS
+- Local GPU inference via Ollama
+- Docker Compose with container PaaS
 
 ---
 

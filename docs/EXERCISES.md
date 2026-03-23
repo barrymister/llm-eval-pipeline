@@ -129,3 +129,18 @@ Design a model compatibility system for this pipeline. The system should:
 4. In a multi-model comparison run (4 models × 3 inputs = 12 runs), should one incompatible model fail the entire request or just skip that model and return results for the rest? What does SageMaker Pipelines do when one step in a pipeline fails — does it abort or continue?
 
 **Extension:** Read `docs/adr/002-model-catalog-over-hardcoded-lists.md` for the production decision. How would you implement the `excludeFromModes` pattern as a reusable middleware that works across different API routes?
+
+---
+
+## Production Cross-Reference
+
+These exercises cover cert theory. The following production systems implement the same patterns at scale — reference them during interviews to demonstrate real-world application:
+
+| Cert concept | Production implementation | Where |
+|---|---|---|
+| Experiment tracking (Ex. 1-2) | MLflow experiment tracking integrated into automated SEO content pipeline — tracks model, prompt, output quality across daily cron runs | Private production system |
+| Model catalog + compatibility (Ex. 6) | Model catalog with 76+ models, capability metadata, and compatibility guards that reject incompatible model/task combinations before inference | [ai-model-selector](https://npmjs.com/package/ai-model-selector) |
+| Model metadata as a service (Ex. 6) | MCP server exposing model catalog via structured tool calls — AI assistants can query capabilities, check compatibility, and get task-based recommendations | [ai-model-selector-mcp](https://npmjs.com/package/ai-model-selector-mcp) |
+| Multi-provider evaluation (Ex. 3-4) | AI visibility monitoring scanning 4 AI search engines for brand mentions with automated alerting and quality tracking | Private production system |
+| Pipeline orchestration (Ex. 5) | Fully automated programmatic SEO pipeline — AI content generation → Git PR → merge → deploy, 33 pages live with daily cron | Private production system |
+| Infrastructure monitoring (Ex. 5) | 35-service infrastructure inventory dashboard with live container health monitoring | Private production system |
