@@ -43,4 +43,4 @@ Each model entry includes:
 
 ## Production Validation
 
-This pattern was validated in a production system (growth-engine) managing AI content generation across 5 SaaS products. The catalog grew to 40+ models across 3 providers. The exclusion rule system prevented a specific failure mode: phi4-reasoning producing `<!DOCTYPE` errors when Cloudflare timed out on its extended chain-of-thought generation.
+This pattern was validated in production systems managing AI content generation across multiple SaaS products. The catalog grew to 76+ models across 3 providers. The exclusion rule system prevented a specific failure mode: reasoning models producing errors when proxy timeouts interrupted extended chain-of-thought generation. The catalog was also wrapped in an MCP server ([ai-model-selector-mcp](https://npmjs.com/package/ai-model-selector-mcp)) giving AI assistants structured tool access to model metadata.
